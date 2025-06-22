@@ -1,10 +1,9 @@
 const express = require("express");
 const pool = require("../config/db");
 const verifyToken = require("../middleware/auth");
-
 const router = express.Router()
 
-// POST /api/homes
+// POST /api/homes   -  add new Home
 router.post("/", verifyToken, async(req, res) => {
     const { title, description, price, location, image_url } = req.body;
 
