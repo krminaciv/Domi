@@ -1,27 +1,55 @@
 import { useState } from "react";
+import api from "../api/axios";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
-function Login() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+const Login = () =>  {
+  
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const { login } = useContext(UserContext);
+  const navigate = useNavigate()
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleLogin = async (e) => {
+    e.preventDefault()
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login form submitted:", formData);
-  };
+    try {
+      const res = await api.post("/users/login", {
+        email,
+        password
+      })
+      console.log("Login odgovor:", res.data);
+
+      //backend should return user object
+      const userData = {
+        id: res.data.id,
+        name: res.data.name,
+        email: res.data.email,
+        token: res.data.token
+      };
+      login(userData);
+      navigate("/") //navigate to home page
+
+    } catch (err) {
+      console.error(err.response?.data?.message || "Login error")
+      alert("Login failed.")
+    }
+
+  }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white p-8 rounded shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
             name="email"
             placeholder="Email address"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -29,8 +57,8 @@ function Login() {
             type="password"
             name="password"
             placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
