@@ -14,7 +14,7 @@ function Navbar() {
         </h1>
         <ul className="flex space-x-6 text-gray-700 font-medium">
           <li>
-            <Link to="/" className="hover:text-blue-600">Home</Link>
+            <Link to="/homes" className="hover:text-blue-600">Homes</Link>
           </li>
 
           {!user ? (
@@ -29,9 +29,7 @@ function Navbar() {
           ) : (
             <>
               <li>
-                <span className="text-blue-600 font-semibold">
-                  {user.name}
-                </span>
+                <Link to="/profile" className="hover:text-blue-600">{user.name}</Link>
               </li>
               <li>
                 <button onClick={logout} className="hover:text-red-600">
