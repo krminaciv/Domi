@@ -1,6 +1,41 @@
-import HouseCard from "../components/HouseCard";
+import { useEffect, useState } from "react";
+import api from "../api/axios";
+import { Link } from "react-router-dom";
+import HomeCard from "../components/HomeCard";
 
 function Home() {
+
+  const [homes, setHomes] = useState([]);
+
+   useEffect(() => {
+    const fetchHomes = async () => {
+      try {
+        const res = await api.get("/homes");
+        setHomes(res.data);
+      } catch (err) {
+        console.error("Error fetching homes:", err);
+      }
+    };
+
+    fetchHomes();
+  }, []);
+
+  const latestHomes = [];
+  for (let i = 0; i < 3; i++) {
+    const home = homes[i];
+    if (!home) continue
+    latestHomes.push(
+      <HomeCard
+        key={home.id}
+        image={home.image_url}
+        title={home.title}
+        description={home.description}
+        price={home.price}
+        id={home.id}
+      />
+    );
+  }
+
   return (
     <div>
       {/* Hero Section */}
@@ -47,27 +82,7 @@ function Home() {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          <HouseCard
-            image="https://images.unsplash.com/photo-1498176126716-a01bc267f662?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTA0fHxob3VzZXxlbnwwfDB8MHx8fDA%3D"
-            title="Banana Island, Lagos"
-            description="5 beds • 3 baths • 500 m²"
-            price="₦100,000,000"
-            id="1"
-          />
-          <HouseCard
-            image="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
-            title="Parkview Estate, Lagos"
-            description="4 beds • 2 baths • 400 m²"
-            price="₦200,000,000"
-            id="1"
-          />
-          <HouseCard
-            image="https://images.unsplash.com/photo-1584752242818-b4bd7fb3fe10?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTAzfHxob3VzZXxlbnwwfDB8MHx8fDA%3D"
-            title="Eko Atlantic, Lagos"
-            description="6 beds • 4 baths • 600 m²"
-            price="₦500,000,000"
-            id="1"
-          />
+          {latestHomes}
         </div>
       </section>
     </div>
